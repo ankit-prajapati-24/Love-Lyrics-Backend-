@@ -93,8 +93,8 @@ exports.getTrack = async (req, res) => {
     const { Name } = req.body;
    console.log(Name);
     try {
-        const track = await Track.find({ Name} );
-        if (track.length === 0) {
+        const tracks = await Track.find({ Name: { $regex: new RegExp(Name, 'i') } });
+        if (tracks && tracks.lenght == 0) {
             return res.status(404).json({
                 msg: "Song Not Found"
             });
@@ -102,7 +102,7 @@ exports.getTrack = async (req, res) => {
 
         res.status(200).json({
             msg: "Song found",
-            track: track
+            tracks: tracks
         });
     } catch (err) {
         res.status(500).json({
