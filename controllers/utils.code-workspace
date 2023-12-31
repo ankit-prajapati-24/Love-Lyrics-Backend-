@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "utils",
+			"path": "../../../Server/utils"
+		},
+		{
+			"name": "Server",
+			"path": ".."
+		}
+	],
+	"settings": {}
+}
