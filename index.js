@@ -47,6 +47,16 @@ app.get("/api", (req, res) => {
     message: "Your server is running"
   });
 });
+app.get("/", (req, res) => {
+  res.json({
+    message: "Your server is running"
+  });
+});
+app.get("/love-lyrics-backend", (req, res) => {
+  res.json({
+    message: "Your server is running"
+  });
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
