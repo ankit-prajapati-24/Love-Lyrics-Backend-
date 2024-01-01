@@ -158,7 +158,6 @@ exports.getTrack = async (req, res) => {
         const aritistimg = await uploadImageToCloudinary(ArtistImage, process.env.FOLDER_NAME);
 
 
-
         // Create payload with the provided information
         const payload = {
             Name: Name,
