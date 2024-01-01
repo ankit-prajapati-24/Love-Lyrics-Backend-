@@ -28,14 +28,18 @@ function convertGoogleDriveLinkToDirectDownload(link) {
 exports.addTrack = async (req, res) => {
     try {
         // Destructuring values from the request body
-        const { Name, Url, ArtistName } = req.body;
+        const { Name, Url, ArtistName} = req.body;
+
         const downloadLink = convertGoogleDriveLinkToDirectDownload(Url);
 
         // Assuming req.files.Image contains the image file
         const Image = req.files.Image;
+        const ArtistImage = req.files.ArtistImage;
+
 
         // Uploading image to Cloudinary
         const uploaddata = await uploadImageToCloudinary(Image, process.env.FOLDER_NAME);
+        const aritistimg = await uploadImageToCloudinary(ArtistImage, process.env.FOLDER_NAME);
 
         // Create payload with the provided information
         const payload = {
@@ -49,14 +53,16 @@ exports.addTrack = async (req, res) => {
         const track = await Track.create(payload);
 
         // Check if the artist exists
-        const artist = await Artist.findOne({ Name: ArtistName });
+        const artist = await Artist.findOne({ Name: ArtistName.trim("") });
 
         if (artist) {
             // If artist exists, update the artist's Songs array
+            console.log("artist found");
             const updatedArtist = await Artist.findOneAndUpdate(
-                { Name: ArtistName },
-                { $push: { Songs: track._id } },
-                { new: true }
+                { Name: ArtistName,
+               
+                 $push: { Songs: track._id } },
+                { new: true },
             ).populate("Songs").exec();
 
             return res.status(200).json({
@@ -67,6 +73,7 @@ exports.addTrack = async (req, res) => {
         } else {
             // If artist does not exist, create a new artist
             const payload = {
+                Image:aritistimg.secure_url,
                 Name: ArtistName,
                 Songs: [track._id], // Assuming this is an array
             };
@@ -94,11 +101,11 @@ exports.getTrack = async (req, res) => {
    console.log(Name);
     try {
         const tracks = await Track.find({ Name: { $regex: new RegExp(Name, 'i') } });
-        if (tracks && tracks.lenght == 0) {
-            return res.status(404).json({
-                msg: "Song Not Found"
-            });
-        }
+        // if (tracks && tracks.lenght == 0) {
+        //     return res.status(404).json({
+        //         msg: "Song Not Found"
+        //     });
+        // }
 
         res.status(200).json({
             msg: "Song found",
@@ -135,16 +142,21 @@ exports.getTrack = async (req, res) => {
                   
                   // Destructuring values from the request body
         const { Name,AlbumName,Url, ArtistName } = req.body;
+        // const ArtistName = ArtistName.trim("");
+        console.log(req.body);
         const downloadLink = convertGoogleDriveLinkToDirectDownload(Url);
 
         // Assuming req.files.Image contains the image file
         const Image = req.files.Image;
-        
+        const ArtistImage = req.files.ArtistImage;        
         const AlbumImg = req.files.AlbumImg;
 
+        console.log("step");
 
         // Uploading image to Cloudinary
         const uploaddata = await uploadImageToCloudinary(Image, process.env.FOLDER_NAME);
+        const aritistimg = await uploadImageToCloudinary(ArtistImage, process.env.FOLDER_NAME);
+
 
 
         // Create payload with the provided information
@@ -163,9 +175,12 @@ exports.getTrack = async (req, res) => {
 
         if (artist) {
             // If artist exists, update the artist's Songs array
+            console.log("aritst found");
             const updatedArtist = await Artist.findOneAndUpdate(
                 { Name: ArtistName },
-                { $push: { Songs: track._id } },
+                {$push: { Songs: track._id } 
+            },
+
                 { new: true }
             ).populate("Songs").exec();
 
@@ -174,6 +189,7 @@ exports.getTrack = async (req, res) => {
             // If artist does not exist, create a new artist
             const payload = {
                 Name: ArtistName,
+                Image:aritistimg.secure_url,
                 Songs: [track._id], // Assuming this is an array
             };
             const newArtist = await Artist.create(payload);
