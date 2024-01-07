@@ -101,12 +101,7 @@ exports.getTrack = async (req, res) => {
    console.log(Name);
     try {
         const tracks = await Track.find({ Name: { $regex: new RegExp(Name, 'i') } });
-        // if (tracks && tracks.lenght == 0) {
-        //     return res.status(404).json({
-        //         msg: "Song Not Found"
-        //     });
-        // }
-
+    
         res.status(200).json({
             msg: "Song found",
             tracks: tracks
@@ -118,7 +113,21 @@ exports.getTrack = async (req, res) => {
         });
     }}
 
-     
+    exports.getAllTrack = async (req, res) => {
+      
+        try {
+            const tracks = await Track.find({ });
+            res.status(200).json({
+                msg: "Song found",
+                tracks: tracks
+            });
+        } catch (err) {
+            res.status(500).json({
+                msg: "Could not search the track",
+                error: err.message
+            });
+        }}
+         
     exports.getArtists = async (req, res) => {
         try {
             const artist = await Artist.find({}).populate("Songs").exec();
