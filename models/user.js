@@ -8,7 +8,7 @@ const userSchema = mongoose.Schema({
         type :"String",
         required: true
     },
-    BirthDay:{
+    Birthday:{
         type :"String",
     },
     Gender:{

@@ -3,6 +3,7 @@ const Track = require("../models/track");
 const jwt = require('jsonwebtoken');
 const OTP = require('../models/OTP');
 const otpgenerator = require('otp-generator');
+const { uploadImageToCloudinary } = require("../utils/imageUploader");
 require("dotenv").config();
 
 exports.sendOTP = async (req, res) => {
@@ -226,5 +227,40 @@ exports.Login = async(req,res) => {
         res.status(400).json({
             error: err
         })
+    }
+}
+
+exports.updateInformation = async(req,res) => {
+    try{
+        const {Email ,Birthday,Country,Gender,Name} = req.body;
+        const Image = req.files.Image;
+        console.log(req.body,Image);
+        const data = await uploadImageToCloudinary(Image,process.env.FOLDER_NAME);
+        console.log(data);
+
+        const user  = await User.findOneAndUpdate({Email: Email},
+            {
+                Email: Email,
+                Birthday: Birthday,
+                Country: Country,
+                Gender:Gender,
+                Image: data.secure_url,
+                Name:Name
+            },
+            {
+                new:true
+            }
+            );
+            console.log(user);
+
+            res.status(200).json({
+                user
+            });
+       
+    }
+    catch(err){
+        res.status(400).json({
+            error: err
+        });
     }
 }
