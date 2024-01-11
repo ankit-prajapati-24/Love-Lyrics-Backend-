@@ -6,23 +6,7 @@ const { uploadImageToCloudinary } = require("../utils/imageUploader");
 require("dotenv").config();
 
 
-function convertGoogleDriveLinkToDirectDownload(link) {
-    // Extract the file ID from the Google Drive URL
-    const fileIdMatch = link.match(/\/file\/d\/(.+?)\/view/);
-    
-    if (fileIdMatch) {
-      const fileId = fileIdMatch[1];
-      
-      // Construct the direct download link
-      const directDownloadLink = `https://drive.google.com/uc?export=download&id=${fileId}`;
-      
-      return directDownloadLink;
-    } else {
-      // Return the original link if it doesn't match the expected pattern
-      return link;
-    }
-  }
-  
+
   // Example usage
   
 exports.addTrack = async (req, res) => {
@@ -30,7 +14,6 @@ exports.addTrack = async (req, res) => {
         // Destructuring values from the request body
         const { Name, Url, ArtistName} = req.body;
 
-        const downloadLink = convertGoogleDriveLinkToDirectDownload(Url);
 
         // Assuming req.files.Image contains the image file
         const Image = req.files.Image;
@@ -150,28 +133,33 @@ exports.getTrack = async (req, res) => {
               try{
                   
                   // Destructuring values from the request body
-        const { Name,AlbumName,Url, ArtistName } = req.body;
+        const { Name,AlbumName, ArtistName,ArtistImage,AlbumImg,Image } = req.body;
         // const ArtistName = ArtistName.trim("");
         console.log(req.body);
-        const downloadLink = convertGoogleDriveLinkToDirectDownload(Url);
+        // const downloadLink = convertGoogleDriveLinkToDirectDownload(Url);
 
         // Assuming req.files.Image contains the image file
-        const Image = req.files.Image;
-        const ArtistImage = req.files.ArtistImage;        
-        const AlbumImg = req.files.AlbumImg;
+        // const Image = req.files.Image;
+        // const ArtistImage = req.files.ArtistImage;        
+        // const AlbumImg = req.files.AlbumImg;
+        const music = req.files.music;
 
+       
         console.log("step");
+        console.log(music);
 
         // Uploading image to Cloudinary
-        const uploaddata = await uploadImageToCloudinary(Image, process.env.FOLDER_NAME);
-        const aritistimg = await uploadImageToCloudinary(ArtistImage, process.env.FOLDER_NAME);
+        // const uploaddata = await uploadImageToCloudinary(Image, process.env.FOLDER_NAME);
+        // const aritistimg = await uploadImageToCloudinary(ArtistImage, process.env.FOLDER_NAME);
+        const musicurl = await uploadImageToCloudinary(music, process.env.FOLDER_NAME);
+        console.log(musicurl);
 
 
         // Create payload with the provided information
         const payload = {
             Name: Name,
-            Url: downloadLink,
-            Image: uploaddata.secure_url,
+            Url: musicurl.secure_url,
+            Image: Image,
             Artists: [ArtistName] // Assuming ArtistName is a single value, not an array
         };
 
@@ -197,13 +185,13 @@ exports.getTrack = async (req, res) => {
             // If artist does not exist, create a new artist
             const payload = {
                 Name: ArtistName,
-                Image:aritistimg.secure_url,
+                Image:ArtistImage,
                 Songs: [track._id], // Assuming this is an array
             };
             const newArtist = await Artist.create(payload);
         }
         
-        const albumsimglink = await uploadImageToCloudinary(AlbumImg, process.env.FOLDER_NAME);
+        // const albumsimglink = await uploadImageToCloudinary(AlbumImg, process.env.FOLDER_NAME);
         
         const ExistAlbum = await Album.findOne({Name:AlbumName});
         console.log("everthing is fine above",ExistAlbum);
@@ -218,7 +206,7 @@ exports.getTrack = async (req, res) => {
         }
         else{
             const AlbumData =await Album.create({
-                Image:albumsimglink.secure_url,
+                Image:AlbumImg,
                 Name:AlbumName,
                 Songs:[track]
             });    
@@ -235,6 +223,21 @@ exports.getTrack = async (req, res) => {
               }
         }
     
+        exports.test = async (req,res) => {
+            try{
+                console.log(req.files,req.body);
+                const music = req.files.music;
+                console.log(music);
+                const data =await uploadImageToCloudinary(music,process.env.FOLDER_NAME);
+                console.log(data);
+                res.status(200).json({
+                    data
+                })                    
+            }
+            catch(err){
+                res.status(404).json({message: err.message});
+            }
+        }
 
 
 
