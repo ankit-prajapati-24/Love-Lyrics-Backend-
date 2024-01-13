@@ -53,7 +53,7 @@ exports.removeFavorite = async (req, res) => {
   try {
     const { SongId, UserId } = req.body;
     console.log(req.body, "removing favorite");
-
+    
     const updatedUser = await User.findOneAndUpdate(
       { _id: UserId },
       { $pull: { Favorite: SongId } },

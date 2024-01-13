@@ -232,12 +232,16 @@ exports.Login = async(req,res) => {
 
 exports.updateInformation = async(req,res) => {
     try{
+        console.log("data is here",req.body);
         const {Email ,Birthday,Country,Gender,Name} = req.body;
-        const Image = req.files.Image;
-        console.log(req.body,Image);
-        const data = await uploadImageToCloudinary(Image,process.env.FOLDER_NAME);
-        console.log(data);
+        console.log("data is here",req.files);
+        // if()
+        
+        // const Image = null;
 
+        // console.log(req.body,Image);
+        if(req.files && req.files.Image){   
+        const data = await uploadImageToCloudinary(req.files.Image,process.env.FOLDER_NAME);
         const user  = await User.findOneAndUpdate({Email: Email},
             {
                 Email: Email,
@@ -256,6 +260,27 @@ exports.updateInformation = async(req,res) => {
             res.status(200).json({
                 user
             });
+        }
+        else{
+
+            const user  = await User.findOneAndUpdate({Email: Email},
+                {
+                    Email: Email,
+                    Birthday: Birthday,
+                    Country: Country,
+                    Gender:Gender,
+                    Name:Name
+                },
+                {
+                    new:true
+                }
+                );
+                console.log(user);
+                res.status(200).json({
+                    user
+                });
+        }
+
        
     }
     catch(err){
