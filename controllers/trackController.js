@@ -124,6 +124,21 @@ exports.getTrack = async (req, res) => {
             });
         }}
     
+        exports.getArtistsData = async (req, res) => {
+            try {
+                console.log("this are per", req.query.ArtistId);
+                const Name = req.query.ArtistId;
+                const artist = await Artist.findOne({Name:Name}).populate("Songs").exec();
+                res.status(200).json({
+                    data:artist
+                })
+            } catch (err) {
+                res.status(500).json({
+                    msg: "Could not get  the aritist",
+                    error: err.message
+                });
+            }}
+        
         
        
 //  *******************************************************************************************************************
