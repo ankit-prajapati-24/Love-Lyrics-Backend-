@@ -84,10 +84,15 @@ exports.getTrack = async (req, res) => {
    console.log(Name);
     try {
         const tracks = await Track.find({ Name: { $regex: new RegExp(Name, 'i') } });
+        const artist = await Artist.find({ Name: { $regex: new RegExp(Name, 'i') } });
+        const albums = await Album.find({ Name: { $regex: new RegExp(Name, 'i') } });
+
     
         res.status(200).json({
             msg: "Song found",
-            tracks: tracks
+            tracks: tracks,
+            Albums:albums,
+            Artist: artist
         });
     } catch (err) {
         res.status(500).json({
