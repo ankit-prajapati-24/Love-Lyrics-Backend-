@@ -58,21 +58,30 @@ exports.getPlaylists = async(req,res) =>{
     }
 }
 
-exports.addTracksToPlaylist = async(req,res) =>{
-    try{
-        const {id,trackId,playlistId} = req.body;
-        const playlist = await  Playlist.findOneAndUpdate(
-            {_id:playlistId},
-            {$push:{Songs:[trackId]}},
-            { new:true}
-            ).populate("Songs").exec();
+exports.addTracksToPlaylist = async (req, res) => {
+    try {
+        const { trackId, playlistId,id } = req.body;
+        console.log(trackId, playlistId,id);
+        // Assuming playlistId is an array of multiple playlist IDs
+        const updatedPlaylists = await Promise.all(
+            playlistId.map(async (id) => {
+                const playlist = await Playlist.findOneAndUpdate(
+                    { _id: id },
+                    { $push: { Songs: trackId } },
+                    { new: true }
+                ).populate("Songs").exec();
+                
+                return playlist;
+            })
+        );
+        console.log(updatedPlaylists);
 
-        return res.status(200).json({playlist});
+        return res.status(200).json({ playlists: updatedPlaylists });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
-    catch(err){
-        res.status(500).json({message: err.message});
-    }
-}
+};
+
 exports.removeTracksToPlaylist = async(req,res) =>{
     try{
         const {id,trackId,playlistId} = req.body;
