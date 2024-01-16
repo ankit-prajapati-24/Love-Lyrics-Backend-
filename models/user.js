@@ -31,6 +31,12 @@ const userSchema = mongoose.Schema({
             type:mongoose.Schema.Types.ObjectId,
             ref:"Track"
         }
+    ],
+    Playlist:[
+        {
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"Playlist"
+        }
     ]
 })
 

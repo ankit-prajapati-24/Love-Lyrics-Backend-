@@ -7,6 +7,7 @@ const cors = require("cors");
 const trackrouter = require("./routes/trackRoutes");
 const albumsRouter = require("./routes/albumRoutes");
 const Authrouter = require("./routes/Auth");
+const playlistRoutes = require("./routes/PlaylistRouts");
 const { ConnectCloadinary } = require("./config/Coudinary");
 const fileupload = require("express-fileupload");
 const dotenv = require("dotenv");
@@ -40,6 +41,7 @@ ConnectCloadinary();
 app.use("/api/v1/tracks",trackrouter);
 app.use("/api/v1/Album",albumsRouter);
 app.use("/api/v1/Auth",Authrouter);
+app.use("/api/v1/Playlist",playlistRoutes);
 
 
 // default route
