@@ -84,8 +84,8 @@ exports.getTrack = async (req, res) => {
    console.log(Name);
     try {
         const tracks = await Track.find({ Name: { $regex: new RegExp(Name, 'i') } });
-        const artist = await Artist.find({ Name: { $regex: new RegExp(Name, 'i') } });
-        const albums = await Album.find({ Name: { $regex: new RegExp(Name, 'i') } });
+        const artist = await Artist.find({ Name: { $regex: new RegExp(Name, 'i') } }).populate("Songs").exec();
+        const albums = await Album.find({ Name: { $regex: new RegExp(Name, 'i') } }).populate("Songs").exec();
 
     
         res.status(200).json({
