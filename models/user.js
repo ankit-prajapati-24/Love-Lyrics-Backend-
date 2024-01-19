@@ -37,7 +37,11 @@ const userSchema = mongoose.Schema({
             type:mongoose.Schema.Types.ObjectId,
             ref:"Playlist"
         }
-    ]
+    ],
+     SubsriptionToken:{
+        type:String,
+        expire:Date.now() * 28 * 24 * 60 * 60 * 1000 
+     }
 })
 
 module.exports = mongoose.model("User",userSchema);
