@@ -17,11 +17,12 @@ dotenv.config(); // Load environment variables from .env file
 const PORT = process.env.PORT || 4000;
 
 const io = new Server(server, {
-  cors: {
-    origin: "*",
-    credentials:true,
-  }
-});
+    cors: {
+      origin: "*",
+      credentials:true,
+      methods: ["GET", "POST"]
+    }
+  });
 
 // connect database
 dbconnect();
